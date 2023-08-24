@@ -1,7 +1,7 @@
 #![feature(async_fn_in_trait)]
 #![feature(impl_trait_projections)]
 #![allow(incomplete_features)]
-use embedded_io::adapters::FromTokio;
+use embedded_io_adapters::tokio_1::FromTokio;
 use embedded_nal_async::{AddrType, IpAddr, Ipv4Addr};
 use hyper::server::conn::Http;
 use hyper::service::{make_service_fn, service_fn};
@@ -276,9 +276,9 @@ struct TokioTcp;
 #[derive(Debug)]
 struct TestError;
 
-impl embedded_io::Error for TestError {
-    fn kind(&self) -> embedded_io::ErrorKind {
-        embedded_io::ErrorKind::Other
+impl embedded_io_async::Error for TestError {
+    fn kind(&self) -> embedded_io_async::ErrorKind {
+        embedded_io_async::ErrorKind::Other
     }
 }
 

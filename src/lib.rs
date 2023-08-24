@@ -5,7 +5,7 @@
 #![doc = include_str!("../README.md")]
 use core::{num::ParseIntError, str::Utf8Error};
 
-use embedded_io::asynch::ReadExactError;
+use embedded_io_async::{ReadExactError, WriteAllError};
 
 mod fmt;
 
@@ -22,7 +22,7 @@ pub enum Error {
     /// An error with DNS (it's always DNS)
     Dns,
     /// An error with the underlying network
-    Network(embedded_io::ErrorKind),
+    Network(embedded_io_async::ErrorKind),
     /// An error encoding or decoding data
     Codec,
     /// An error parsing the URL
@@ -40,23 +40,32 @@ pub enum Error {
     ConnectionClosed,
 }
 
-impl embedded_io::Error for Error {
-    fn kind(&self) -> embedded_io::ErrorKind {
-        embedded_io::ErrorKind::Other
+impl embedded_io_async::Error for Error {
+    fn kind(&self) -> embedded_io_async::ErrorKind {
+        embedded_io_async::ErrorKind::Other
     }
 }
 
-impl From<embedded_io::ErrorKind> for Error {
-    fn from(e: embedded_io::ErrorKind) -> Error {
+impl From<embedded_io_async::ErrorKind> for Error {
+    fn from(e: embedded_io_async::ErrorKind) -> Error {
         Error::Network(e)
     }
 }
 
-impl<E: embedded_io::Error> From<ReadExactError<E>> for Error {
+impl<E: embedded_io_async::Error> From<ReadExactError<E>> for Error {
     fn from(value: ReadExactError<E>) -> Self {
         match value {
             ReadExactError::UnexpectedEof => Error::ConnectionClosed,
             ReadExactError::Other(e) => Error::Network(e.kind()),
+        }
+    }
+}
+
+impl<E: embedded_io_async::Error> From<WriteAllError<E>> for Error {
+    fn from(value: WriteAllError<E>) -> Self {
+        match value {
+            WriteAllError::WriteZero => Error::ConnectionClosed,
+            WriteAllError::Other(e) => Error::Network(e.kind()),
         }
     }
 }
