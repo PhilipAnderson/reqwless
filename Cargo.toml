@@ -22,7 +22,7 @@ base64 = { version = "0.21.0", default-features = false }
 rand_core = { version = "0.6", default-features = true }
 log = { version = "0.4", optional = true }
 defmt = { version = "0.3", optional = true }
-embedded-tls = { path = "../embedded-tls", default-features = false, features = [
+embedded-tls = { git = "https://github.com/PhilipAnderson/embedded-tls", branch = "update-embedded-io", default-features = false, features = [
     "async",
 ], optional = true }
 rand_chacha = { version = "0.3", default-features = false }
